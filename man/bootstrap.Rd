@@ -4,15 +4,24 @@
 \alias{bootstrap}
 \title{Bootstrap constructor}
 \usage{
-bootstrap(data, FUN = mean, ...)
+bootstrap(data, FUN = mean, n = 1000, ...)
 }
 \arguments{
 \item{data}{The data from which to resample}
 
 \item{FUN}{The function of interest}
 
+\item{n}{The number of resamples to perform}
+
 \item{...}{Additional arguments}
+}
+\value{
+A an object with class \code{strop}
 }
 \description{
 Bootstrap constructor
+}
+\examples{
+data(mtcars)
+bootstrap(mtcars$cyl)
 }
