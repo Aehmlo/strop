@@ -1,0 +1,81 @@
+---
+title: "Introduction to strop"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to strop}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(strop)
+```
+
+# General bootstrap functionality
+
+At the core of `strop` is the `bootstrap` function. This is a generic function with a default method (for one-dimensional data) and a method for data frames (two-dimensional data). This function is a constructor for an object of class `strop`, which can be used in the package's other provided functions.
+
+## Single-valued bootstrap
+
+Single-valued bootstrapping is straightforward: the default function used by `bootstrap` is `mean`.
+
+```{r}
+data(mtcars)
+bootstrap(mtcars$hp)$pop
+```
+
+## Multivalued bootstrap
+
+Both the data frame and default constructors may be used with multivalued functions.
+
+```{r}
+cen <- function(x) list(mean = mean(x), median = median(x))
+bootstrap(mtcars$hp, cen)$pop
+```
+
+## Calculating bootstrap quantiles
+
+`strop` provides a `quantile.strop` function for calculating quantiles based on the bootstrap procedure. This function simply delegates to `quantile(obj$stats)`.
+
+```{r}
+quantile(bootstrap(mtcars$hp), c(0.05, 0.95))
+```
+
+## Calculating bootstrap confidence intervals
+
+`strop` exposes a `confint.strop` function for calculating central confidence intervals based on the bootstrap procedure.
+
+```{r}
+confint(bootstrap(mtcars$hp, n = 100))
+```
+
+## Printing bootstrap results
+
+`strop` provides a `print.strop` function for assessing the results of bootstrap iteration. The function call, (original) sample estimates, and the beginning of the list of bootstrap estimates are printed.
+
+```{r}
+print(bootstrap(mtcars$hp, n = 100))
+```
+
+## Visualizing bootstrap results
+
+`strop` provides `plot.strop` function to visualize the results of a bootstrap application. A histogram of each statistic is plotted for multi-valued bootstrapping, and central confidence intervals are indicated on each plot.
+
+```{r}
+plot(bootstrap(mtcars$hp, n = 100))
+```
+
+# Multiple linear regression
+
+`strop` provides a convenience function for multiple linear regression analysis using the bootstrap procedure: `mlrboot`. Given a fitted model object, `mlrboot` produces a bootstrap object for the estimation of model coefficients.
+
+```{r}
+fit <- lm(hp ~ ., data = mtcars)
+boot <- mlrboot(fit)
+print(boot, max = 5)
+plot(boot, vars = c("cyl", "wt"))
+```
