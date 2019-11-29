@@ -21,7 +21,7 @@ plot.strop <- function(x, conf.level = 0.95, combine = F, vars = NA, ...) {
     fun <- ifelse(is.null(obj$call$FUN), "means", obj$call$FUN)
     if (is.list(obj$stats)) {
         stats <- names(obj$stats)
-        n <- length(stats)
+        n <- length(obj$stats)
         width <- floor(sqrt(n))
         height <- ceiling(sqrt(n))
         if(combine) {
@@ -29,7 +29,8 @@ plot.strop <- function(x, conf.level = 0.95, combine = F, vars = NA, ...) {
         }
         for (i in 1:n) {
             termname <- stats[i]
-            stat <- unlist(obj$stats[[termname]])
+            stat <- unlist(obj$stats[[i]])
+            termname <- ifelse(is.null(termname), as.character(i), termname)
             if (anyNA(vars) | is.element(termname, vars)) {
                 hist(stat, main = termname, xlab = "Sample statistics")
                 abline(v = quantile(stat, (1 + c(-1, 1) * conf.level) / 2), lty = "dashed")
