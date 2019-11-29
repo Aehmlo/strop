@@ -15,7 +15,11 @@ print.strop <- function(x, max = 10, ...) {
     fn <- cl[1]
     args <- cl[-1]
     cat(paste("Call:", paste0(fn, "(", paste(args, collapse = ", "), ")"), "\n", sep = "\n"))
-    ests <- sapply(obj$stats, function(x) head(x, max))
+    if (length(obj$pop) > 1) {
+        ests <- sapply(obj$stats, function(x) head(x, max))
+    } else {
+        ests <- head(obj$stats, max)
+    }
     cat("Sample estimates:\n")
     print(obj$pop)
     cat("\nBootstrap estimates:\n")
