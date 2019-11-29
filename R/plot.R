@@ -21,16 +21,19 @@ plot.strop <- function(x, conf.level = 0.95, combine = F, vars = NA, ...) {
     fun <- ifelse(is.null(obj$call$FUN), "means", obj$call$FUN)
     if (is.list(obj$stats)) {
         stats <- names(obj$stats)
-        n <- length(obj$stats)
-        width <- floor(sqrt(n))
-        height <- ceiling(sqrt(n))
+        if (anyNA(vars)) {
+            n <- length(obj$stats)
+        } else {
+            n <- length(vars)
+        }
+        width <- ceiling(sqrt(n))
+        height <- floor(sqrt(n))
         if(combine) {
             layout(matrix(1:n, nrow = height, ncol = width, byrow = T))
         }
-        for (i in 1:n) {
-            termname <- stats[i]
+        for (i in 1:length(obj$stats)) {
             stat <- unlist(obj$stats[[i]])
-            termname <- ifelse(is.null(termname), as.character(i), termname)
+            termname <- ifelse(is.null(stats[i]), as.character(i), stats[i])
             if (anyNA(vars) | is.element(termname, vars)) {
                 hist(stat, main = termname, xlab = "Sample statistics")
                 abline(v = quantile(stat, (1 + c(-1, 1) * conf.level) / 2), lty = "dashed")
