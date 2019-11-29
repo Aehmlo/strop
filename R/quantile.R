@@ -14,9 +14,9 @@
 #' obj <- bootstrap(mtcars$cyl)
 #' quantile(obj, 0.5)
 quantile.strop <- function(x, probs, ...) {
-    if (is.nested(x$stats)) {
-        lapply(x$stats, function(x) quantile(x, probs, ...))
+    if (is.list(x$stats)) {
+        sapply(x$stats, function(x) quantile(unlist(x), probs, ...))
     } else {
-        quantile(x$stats, probs, ...)
+        quantile(unlist(x$stats), probs, ...)
     }
 }

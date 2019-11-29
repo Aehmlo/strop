@@ -10,6 +10,7 @@
 #' @importFrom stats coef update
 #' @importFrom utils head
 #'
+#' @return \code{invisible(x)}
 #' @export
 #'
 #' @examples
@@ -18,20 +19,17 @@
 plot.strop <- function(x, conf.level = 0.95, combine = F, vars = NA, ...) {
     obj <- x
     fun <- ifelse(is.null(obj$call$FUN), "means", obj$call$FUN)
-    if (is.nested(obj$stats)) {
-        stats <- obj$stats[[1]]
-        for (i in 2:length(obj$stats)) {
-            stats <- cbind(stats, obj$stats[[i]])
-        }
-        n <- nrow(stats)
+    if (is.list(obj$stats)) {
+        stats <- names(obj$stats)
+        n <- length(stats)
         width <- floor(sqrt(n))
         height <- ceiling(sqrt(n))
         if(combine) {
             layout(matrix(1:n, nrow = height, ncol = width, byrow = T))
         }
-        for (i in 1:nrow(stats)) {
-            stat <- stats[i,]
-            termname <- rownames(stats)[[i]]
+        for (i in 1:n) {
+            termname <- stats[i]
+            stat <- unlist(obj$stats[[termname]])
             if (anyNA(vars) | is.element(termname, vars)) {
                 hist(stat, main = termname, xlab = "Sample statistics")
                 abline(v = quantile(stat, (1 + c(-1, 1) * conf.level) / 2), lty = "dashed")
@@ -44,4 +42,5 @@ plot.strop <- function(x, conf.level = 0.95, combine = F, vars = NA, ...) {
         hist(obj$stats, main = paste("Histogram of", fun), xlab = "Sample statistics")
         abline(v = confint(obj, level = conf.level), lty = "dashed")
     }
+    invisible(x)
 }

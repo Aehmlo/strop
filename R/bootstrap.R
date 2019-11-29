@@ -44,6 +44,8 @@ bootstrap.default <- function(data, FUN = mean, n = 1000, ...) {
 #' @param n The number of resamples to perform
 #' @param ... Additional arguments
 #'
+#' @importFrom purrr transpose
+#'
 #' @return A an object with class \code{strop}
 #' @export
 #'
@@ -57,7 +59,7 @@ bootstrap.data.frame <- function(data, FUN = mean, n = 1000, ...) {
     samples <- lapply(1:n, function(.i) {
         data[sample(1:nrow(data), nrow(data), replace = T),]
     })
-    stats <- lapply(samples, fn)
+    stats <- transpose(lapply(samples, fn))
     invisible(structure(class = "strop", list(
         call = call,
         pop = pop,
