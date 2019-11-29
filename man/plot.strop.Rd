@@ -18,6 +18,9 @@
 
 \item{...}{Additional arguments}
 }
+\value{
+\code{invisible(x)}
+}
 \description{
 Bootstrap visualization
 }
